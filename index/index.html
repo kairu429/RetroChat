@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>匿名チャット</title>
+<title>RetroChat</title>
 <style>
 body { font-family: sans-serif; margin:0; height:100vh; display:flex; justify-content:center; align-items:center; }
 #login, #chatroom { display:none; flex-direction:column; width:80vw; max-width:600px; height:80vh; }
@@ -20,74 +20,76 @@ body { font-family: sans-serif; margin:0; height:100vh; display:flex; justify-co
 <div id="login">
   <h2>名前を入力してください</h2>
   <input id="usernameInput" placeholder="名前" />
-  <button onclick="enterChat()">次へ</button>
+  <button id="enterBtn">次へ</button>
 </div>
 
 <div id="chatroom">
   <div id="chat"></div>
   <div class="inputContainer">
     <input id="msgInput" placeholder="メッセージを入力" />
-    <button id="sendBtn" onclick="sendMessage()">送信</button>
+    <button id="sendBtn">送信</button>
   </div>
 </div>
 
 <script>
-/* --- Supabase設定 --- */
-const supabaseUrl = "YOUR_SUPABASE_URL"; // 例: https://xxxx.supabase.co
-const supabaseKey = "YOUR_ANON_PUBLIC_KEY";
-const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+document.addEventListener("DOMContentLoaded", () => {
+  const supabaseUrl = "https://zwxtdpvxozlsvvqktmxk.supabase.co";
+  const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp3eHRkcHZ4b3psc3Z2cWt0bXhrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUyNjEyMDIsImV4cCI6MjA3MDgzNzIwMn0.t6E4KU0WrZuavyRqzMdw6N2yWt_whIed-W7nRzl2cnE";
+  const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-const loginDiv = document.getElementById("login");
-const chatroomDiv = document.getElementById("chatroom");
-const chatDiv = document.getElementById("chat");
-const msgInput = document.getElementById("msgInput");
+  const loginDiv = document.getElementById("login");
+  const chatroomDiv = document.getElementById("chatroom");
+  const chatDiv = document.getElementById("chat");
+  const enterBtn = document.getElementById("enterBtn");
+  const sendBtn = document.getElementById("sendBtn");
 
-let username = "";
+  let username = "";
 
-// 入室処理
-function enterChat() {
-  username = document.getElementById("usernameInput").value.trim();
-  if(!username) return alert("名前を入力してください");
+  enterBtn.addEventListener("click", () => {
+    username = document.getElementById("usernameInput").value.trim();
+    if (!username) return alert("名前を入力してください");
 
-  loginDiv.style.display = "none";
-  chatroomDiv.style.display = "flex";
+    loginDiv.style.display = "none";
+    chatroomDiv.style.display = "flex";
 
-  // 入室メッセージ送信
-  supabase.from('Chat').insert([{ username, content: `${username}さんが入室しました` }]);
-  
-  subscribeMessages();
-}
+    const msgInput = document.getElementById("msgInput");
 
-// リアルタイム購読
-function subscribeMessages() {
-  supabase
-    .from('Chat')
-    .on('INSERT', payload => {
-      const p = document.createElement('p');
-      p.textContent = `[${payload.new.username}] ${payload.new.content}`;
-      chatDiv.appendChild(p);
-      chatDiv.scrollTop = chatDiv.scrollHeight;
-    })
-    .subscribe();
-}
+    // 入室メッセージ
+    supabase.from('Chat').insert([{ username, content: `${username}さんが入室しました` }]);
 
-// メッセージ送信
-function sendMessage() {
-  if(msgInput.value.trim()) {
-    supabase.from('Chat').insert([{ username, content: msgInput.value }]);
-    msgInput.value = "";
-  }
-}
+    // リアルタイム購読
+    supabase
+      .from('Chat')
+      .on('INSERT', payload => {
+        const p = document.createElement('p');
+        p.textContent = `[${payload.new.username}] ${payload.new.content}`;
+        chatDiv.appendChild(p);
+        chatDiv.scrollTop = chatDiv.scrollHeight;
+      })
+      .subscribe();
+  });
 
-// ページ閉じたりリロードしたらログイン画面へ
-window.addEventListener('beforeunload', () => {
-  username = "";
+  window.sendMessage = function() {
+    const msgInput = document.getElementById("msgInput");
+    if (msgInput.value.trim()) {
+      supabase.from('Chat').insert([{ username, content: msgInput.value }]);
+      msgInput.value = "";
+    }
+  };
+
+  sendBtn.addEventListener("click", () => {
+    if (!username) return alert("まず名前を入力してください");
+    sendMessage();
+  });
+
+  window.addEventListener('beforeunload', () => {
+    username = "";
+    loginDiv.style.display = "flex";
+    chatroomDiv.style.display = "none";
+  });
+
   loginDiv.style.display = "flex";
-  chatroomDiv.style.display = "none";
 });
-
-// 初期表示はログイン画面
-loginDiv.style.display = "flex";
 </script>
 
 </body>
