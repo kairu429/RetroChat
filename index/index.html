@@ -4,13 +4,52 @@
 <meta charset="UTF-8">
 <title>RetroChat</title>
 <style>
-body { font-family: sans-serif; margin:0; height:100vh; display:flex; justify-content:center; align-items:center; }
-#login, #chatroom { display:none; flex-direction:column; width:80vw; max-width:600px; height:80vh; }
+body { 
+  font-family: monospace; 
+  margin:0; 
+  height:100vh; 
+  display:flex; 
+  justify-content:center; 
+  align-items:center; 
+  background-color: black; 
+  color: limegreen;
+}
+#login, #chatroom { 
+  display:none; 
+  flex-direction:column; 
+  width:80vw; 
+  max-width:600px; 
+  height:80vh; 
+}
 #login { align-items:center; }
 #chatroom { display:flex; flex-direction:column; }
-#chat { flex:1; border:1px solid #ccc; padding:5px; overflow-y:auto; margin-bottom:5px; }
-#msgInput { flex:1; padding:10px; font-size:1em; }
-#sendBtn { padding:10px 20px; font-size:1em; margin-left:5px; }
+#chat { 
+  flex:1; 
+  border:1px solid limegreen; 
+  padding:5px; 
+  overflow-y:auto; 
+  margin-bottom:5px; 
+}
+#msgInput { 
+  flex:1; 
+  padding:10px; 
+  font-size:1em; 
+  background:black; 
+  color:limegreen; 
+  border:1px solid limegreen; 
+}
+#sendBtn, #enterBtn { 
+  padding:10px 20px; 
+  font-size:1em; 
+  margin-left:5px; 
+  background:black; 
+  color:limegreen; 
+  border:1px solid white; 
+  cursor:pointer;
+}
+#sendBtn:hover, #enterBtn:hover {
+  background:#111;
+}
 .inputContainer { display:flex; }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
@@ -19,7 +58,7 @@ body { font-family: sans-serif; margin:0; height:100vh; display:flex; justify-co
 
 <div id="login">
   <h2>名前を入力してください</h2>
-  <input id="usernameInput" placeholder="名前" />
+  <input id="usernameInput" placeholder="名前" style="background:black; color:limegreen; border:1px solid limegreen; padding:10px;">
   <button id="enterBtn">次へ</button>
 </div>
 
@@ -34,7 +73,7 @@ body { font-family: sans-serif; margin:0; height:100vh; display:flex; justify-co
 <script>
 document.addEventListener("DOMContentLoaded", () => {
   const supabaseUrl = "https://zwxtdpvxozlsvvqktmxk.supabase.co";
-  const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp3eHRkcHZ4b3psc3Z2cWt0bXhrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTUyNjEyMDIsImV4cCI6MjA3MDgzNzIwMn0.t6E4KU0WrZuavyRqzMdw6N2yWt_whIed-W7nRzl2cnE";
+  const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...";
   const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
   const loginDiv = document.getElementById("login");
